@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 
 const bodyParser = require('body-parser');
 
@@ -17,4 +18,8 @@ app.use((req, res, next) => {
 
 app.use(followedArtistsRoutes);
 
-app.listen(8080);
+mongoose.connect(
+    'mongodb+srv://admin:HM7wwhyy3GcjhzS@cluster0-6akq9.mongodb.net/artists?retryWrites=true&w=majority')
+    .then(result => {
+        app.listen(8080);
+}).catch(err => console.log('Err on listen', err));
