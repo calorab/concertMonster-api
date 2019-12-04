@@ -1,4 +1,4 @@
-const FollowedArtists = require('../Models/artist');
+const Artist = require('../Models/artist');
 
 
 exports.getMyArtists = (req, res, next) => {
@@ -6,13 +6,21 @@ exports.getMyArtists = (req, res, next) => {
 };
 
 exports.postArtist = (req, res, next) => {
-    const name = req.body.name;
-    const genre = req.body.genre;
-    const url = req.body.url;
-
-    res.status(201).json({
-        artist: { name: name, genre: genre, url: url }
+    const artist = new Artist({
+        name: req.body.name,
+        genre: req.body.genre,
+        url: req.body.url
     });
+
+    artist
+        .save()
+        .then(result => {
+            console.log(result, 'post success');
+            res.status(201).json(result);
+        })
+        .catch(err => {
+            console.log(err);
+        });
 };
 
 exports.deleteArtist = (req, res, next) => {
