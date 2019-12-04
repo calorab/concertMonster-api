@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
 const followedArtistsRoutes = require('./Routes/followedArtists');
-const searchArtistsRoutes = require('./Routes/followedArtists');
+const searchArtistsRoutes = require('./Routes/searchRoutes');
 
 const app = express();
 

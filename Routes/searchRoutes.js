@@ -2,7 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 
-const searchArtistsController = require('../Controllers/searchController');
+const searchController = require('../Controllers/searchController');
 
 // GET /searchArtists
 router.get('/searchartists', searchController.getArtistResults);

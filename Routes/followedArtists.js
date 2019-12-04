@@ -2,7 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 
-const followedArtistsController = require('../Controllers/followedArtists');
+const followedArtistsController = require('../Controllers/followedArtistsController');
 
 // GET /myArtists
 router.get('/myartists', followedArtistsController.getMyArtists);
@@ -11,7 +11,7 @@ router.get('/myartists', followedArtistsController.getMyArtists);
 router.post('/myartist', followedArtistsController.postArtist);
 
 // DELETE /myArtists
-router.delete('/myartists/:artistId', followedArtistsController.deleteArtist);
+router.delete('/myartists', followedArtistsController.deleteArtist);
 
 
 module.exports = router;
