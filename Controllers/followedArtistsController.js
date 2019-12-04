@@ -2,7 +2,18 @@ const Artist = require('../Models/artist');
 
 
 exports.getMyArtists = (req, res, next) => {
-    res.status(200).json({message: 'Hello World!'})
+    Artist
+        .find()
+        .then(result => {
+            console.log(result);
+            res.status(200).json({
+                message: 'Artist successfully retrieved!',
+                artists: result
+            });
+        })
+        .catch(err => {
+            console.log(err);
+        });
 };
 
 exports.postArtist = (req, res, next) => {
