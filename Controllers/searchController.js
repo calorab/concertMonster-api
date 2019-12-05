@@ -16,31 +16,25 @@ exports.getArtistResults = (req, res, next) => {
 };
 
 exports.getConcertResults = (req, res, next) => {
-    let concertResults = {
-        concerts: {
-            event: {
-                artistName: 'Alison Wonderland',
-                city: 'Los Angeles',
-                date: '2019-8-19',
-                uri: 'somethingsomething.com/alisonwonderland',
-                venue: 'PPG arena'
-            },
-            event: {
-                artistName: 'Alison Wonderland',
-                city: 'London',
-                date: '2019-10-19',
-                uri: 'somethingsomething.com/alisonwonderland',
-                venue: 'O2 Arena'
-            },
-            event: {
-                artistName: 'Alison Wonderland',
-                city: 'Sydney',
-                date: '2019-12-19',
-                uri: 'somethingsomething.com/alisonwonderland',
-                venue: 'Sydney Operahouse'
-            }
+    let artistName = req.body.artist;
+    // Artist search
+    axios.get('https://api.songkick.com/api/3.0/search/artists.json?apikey=ZOV7FltnOvfdD7o9&', {params: {query: artistName}})
+        .then(response => {
+            console.log(response.data.resultsPage.results);
+            const artistId = req.body.id;
+            console.log(artistId, 'you are now after the artistId');
+            axios({
+                url: 'https://api.songkick.com/api/3.0/artists/' + artistId + '/calendar.json?apikey=ZOV7FltnOvfdD7o9'
+            }).then(result => {
+                console.log(result.data.resultsPage.results, 'you are now after the concert search');
+                const concertResults = result.data.resultsPage;
+                res.status(200).json(concertResults);
+            }).catch(err => {
+                console.log(err, 'concert search');
+            });
+        }).catch(err => {
+            console.log(err);
         }
-    };
-    res.status(200).json(concertResults);
+    );
 };
 
