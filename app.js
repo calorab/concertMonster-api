@@ -17,8 +17,8 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(followedArtistsRoutes);
-app.use(searchArtistsRoutes);
+app.use('/followedartists', followedArtistsRoutes);
+app.use('/search', searchArtistsRoutes);
 
 mongoose.connect(
     'mongodb+srv://admin:HM7wwhyy3GcjhzS@cluster0-6akq9.mongodb.net/test?retryWrites=true&w=majority')
