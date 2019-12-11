@@ -22,11 +22,9 @@ exports.getConcertResults = (req, res, next) => {
         .then(response => {
             console.log(response.data.resultsPage.results);
             const artistId = req.body.id;
-            console.log(artistId, 'you are now after the artistId');
             axios({
                 url: 'https://api.songkick.com/api/3.0/artists/' + artistId + '/calendar.json?apikey=ZOV7FltnOvfdD7o9'
             }).then(result => {
-                console.log(result.data.resultsPage.results, 'you are now after the concert search');
                 const concertResults = result.data.resultsPage;
                 res.status(200).json(concertResults);
             }).catch(err => {

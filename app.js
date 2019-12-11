@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 
 const followedArtistsRoutes = require('./Routes/followedArtists');
 const searchArtistsRoutes = require('./Routes/searchRoutes');
+const authRoutes = require('./Routes/auth');
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use((req, res, next) => {
 
 app.use('/followedartists', followedArtistsRoutes);
 app.use('/search', searchArtistsRoutes);
+app.use('/auth', authRoutes);
 
 mongoose.connect(
     'mongodb+srv://admin:HM7wwhyy3GcjhzS@cluster0-6akq9.mongodb.net/test?retryWrites=true&w=majority')
