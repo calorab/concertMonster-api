@@ -3,16 +3,16 @@ const axios = require('axios').default;
 
 exports.getArtistResults = (req, res, next) => {
     let artistName = req.body.artist;
+    console.log(artistName, req);
     axios.get('https://api.songkick.com/api/3.0/search/artists.json?apikey=ZOV7FltnOvfdD7o9&', {params: {query: artistName}})
         .then(response => {
-            console.log(response.data.resultsPage.results, 'Your results are in');
+            console.log('Your results are in!!!!!', response.data.resultsPage.results);
             const artistsResults = response.data.resultsPage;
             res.status(200).json(artistsResults);
         }).catch(err => {
             console.log(err);
         }
     );
-    
 };
 
 exports.getConcertResults = (req, res, next) => {
