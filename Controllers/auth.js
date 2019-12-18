@@ -5,17 +5,16 @@ const User = require('../Models/user');
 
 exports.signup = (req, res, next) => {
     const email = req.body.email;
-    const name = req.body.name;
     const password = req.body.password;
+    
     bcrypt
-    .hash(password, 12)
-    .then(hashedPassword => {
-        const user = new User({
-            email: email,
-            name: name,
-            password: hashedPassword
-        });
-        return user.save();
+        .hash(password, 12)
+        .then(hashedPassword => {
+            const user = new User({
+                email: email,
+                password: hashedPassword
+            });
+            return user.save();
     })
     .then(result => {
         res.status(201).json(result);
@@ -28,6 +27,7 @@ exports.signup = (req, res, next) => {
 exports.login = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
+    let loadedUser;
     User
     .findOne({email: email})
     .then(user => {
