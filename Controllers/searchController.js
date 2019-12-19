@@ -2,21 +2,24 @@ const axios = require('axios').default;
 
 
 exports.getArtistResults = (req, res, next) => {
-    let artistName = req.body.artist;
-    console.log(artistName, req);
+    let artistName = req.params.artistName;
+    if (!artistName) {
+        throw new Error('no artist name');
+    }
+    console.log(req.body, 'HERE!!');
     axios.get('https://api.songkick.com/api/3.0/search/artists.json?apikey=ZOV7FltnOvfdD7o9&', {params: {query: artistName}})
         .then(response => {
             console.log('Your results are in!!!!!', response.data.resultsPage.results);
             const artistsResults = response.data.resultsPage;
             res.status(200).json(artistsResults);
         }).catch(err => {
-            console.log(err);
+            console.log('HERE IS THE ERROR!!!!!!!!!!!!', err);
         }
     );
 };
 
 exports.getConcertResults = (req, res, next) => {
-    let artistName = req.body.artist;
+    let artistName = req.params.artistName;
     // Artist search
     axios.get('https://api.songkick.com/api/3.0/search/artists.json?apikey=ZOV7FltnOvfdD7o9&', {params: {query: artistName}})
         .then(response => {

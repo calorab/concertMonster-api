@@ -5,7 +5,7 @@ const router = express.Router();
 const searchController = require('../Controllers/searchController');
 
 // GET /searchArtists
-router.get('/artists', searchController.getArtistResults);
+router.get('/artists/:artistName', searchController.getArtistResults);
 
 // GET /searchConcerts
 router.get('/concerts', searchController.getConcertResults);
