@@ -6,7 +6,7 @@ exports.getArtistResults = (req, res, next) => {
     if (!artistName) {
         throw new Error('no artist name');
     }
-    console.log(req.body, 'HERE!!');
+    console.log(req.params, 'HERE!!');
     axios.get('https://api.songkick.com/api/3.0/search/artists.json?apikey=ZOV7FltnOvfdD7o9&', {params: {query: artistName}})
         .then(response => {
             console.log('Your results are in!!!!!', response.data.resultsPage.results);
