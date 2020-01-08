@@ -17,11 +17,13 @@ exports.getMyArtists = (req, res, next) => {
 };
 
 exports.postArtist = (req, res, next) => {
+    console.log(req.body);
     const artist = new Artist({
         name: req.body.name,
-        genre: req.body.genre,
+        tour: req.body.tour,
         url: req.body.url
     });
+
 
     artist
         .save()

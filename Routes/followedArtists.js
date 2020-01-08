@@ -13,5 +13,4 @@ router.post('/myartist', followedArtistsController.postArtist);
 // DELETE /myArtists
 router.delete('/myartists', followedArtistsController.deleteArtist);
 
-
 module.exports = router;

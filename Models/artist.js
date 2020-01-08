@@ -7,9 +7,9 @@ const artistSchema = new Schema(
             type: String,
             required: true
         },
-        genre: {
+        tour: {
             type: String,
-            required: true
+            required: false
         },
         url: {
             type: String,

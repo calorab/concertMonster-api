@@ -6,6 +6,7 @@ const User = require('../Models/user');
 exports.signup = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
+    console.log('received body', req.body);
     
     bcrypt
         .hash(password, 12)
@@ -17,11 +18,26 @@ exports.signup = (req, res, next) => {
             return user.save();
     })
     .then(result => {
-        res.status(201).json(result);
+        console.log('SIGNUP: ', result);
+        data = result;
+        return data;
     })
+    .then(data => {
+        console.log('RIGHT BEFORE TOKEN ', req.body, 'DATA: ', data);
+        const token = jwt.sign(
+            {
+                email: data.email,
+                userId: data._id
+            },
+            'concertmonsterthinkfulsecret',
+            { expiresIn: '1h' }
+        );
+        console.log(token);
+        res.status(200).json({response: data, message: 'NOICE!!', token: token, userId: data._id.toString(), expiresIn: 3600});
+    })    
     .catch(err => {
         console.log(err);
-    })
+    });
 };
 
 exports.login = (req, res, next) => {
@@ -32,24 +48,24 @@ exports.login = (req, res, next) => {
     .findOne({email: email})
     .then(user => {
         if (!user) {
-            res.status(404).json({Message: 'No user with that email found!'});
+            res.status(500).json({message: 'No user with that email found!'});
         }
         loadedUser = user;
         return bcrypt.compare(password, user.password);
     })
     .then(isEqual => {
         if (!isEqual) {
-            res.status(403).json({Message: 'Password is incorrect!'});
+            res.status(403).json({message: 'Password is incorrect!'});
         }
         const token = jwt.sign(
             {
-                email: loadedUser.email, 
-                userId: loadedUser._id.toString()
-            }, 
-            'concertmonsterthinkfulsecret', 
-            {expiresIn: '1h'}
+              email: loadedUser.email,
+              userId: loadedUser._id.toString()
+            },
+            'concertmonsterthinkfulsecret',
+            { expiresIn: '1h' }
         );
-        res.status(200).json({message: 'Logged in successfully!', token: token, userId: loadedUser._id.toString()});
+        res.status(200).json({token: token, userId: loadedUser._id.toString(), expiresIn: 3600});
     })
     .catch(err => {
         console.log(err);
