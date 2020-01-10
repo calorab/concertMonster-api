@@ -7,7 +7,22 @@ exports.signup = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
     console.log('received body', req.body);
-    
+    User.findOne(email)
+    .then(user => {
+        if (user.email) 
+        {
+            const error = new Error('Not authorized!');
+            error.statusCode = 403;
+            throw error;
+        }
+    }).catch(err => {
+        console.log('findOne error: ', err);
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    });
+
     bcrypt
         .hash(password, 12)
         .then(hashedPassword => {
