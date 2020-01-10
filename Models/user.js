@@ -10,7 +10,13 @@ const userSchema = new Schema(
         password: {
             type: String,
             required: true
-        }
+        },
+        artists: [
+            {
+            type: Schema.Types.ObjectId,
+            ref: 'Artist'
+            }
+        ]
     }
 );
 

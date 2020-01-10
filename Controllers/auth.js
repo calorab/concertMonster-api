@@ -29,11 +29,10 @@ exports.signup = (req, res, next) => {
                 email: data.email,
                 userId: data._id
             },
-            'concertmonsterthinkfulsecret',
-            { expiresIn: '1h' }
+            'concertmonsterthinkfulsecret'
         );
         console.log(token);
-        res.status(200).json({response: data, message: 'NOICE!!', token: token, userId: data._id.toString(), expiresIn: 3600});
+        res.status(200).json({response: data, message: 'NOICE!!', token: token, userId: data._id.toString()});
     })    
     .catch(err => {
         console.log(err);

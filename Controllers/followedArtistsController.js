@@ -1,11 +1,11 @@
 const Artist = require('../Models/artist');
+const User = require('../Models/user');
 
 
 exports.getMyArtists = (req, res, next) => {
     Artist
         .find()
         .then(result => {
-            console.log(result);
             res.status(200).json({
                 message: 'Artist successfully retrieved!',
                 artists: result
@@ -17,18 +17,27 @@ exports.getMyArtists = (req, res, next) => {
 };
 
 exports.postArtist = (req, res, next) => {
-    console.log(req.body);
+    console.log('REQUEST BODY: ', req.body);
+    let creator;
     const artist = new Artist({
         name: req.body.name,
         tour: req.body.tour,
-        url: req.body.url
+        url: req.body.url,
+        creator: req.body.userId
     });
-
 
     artist
         .save()
         .then(result => {
-            console.log(result, 'post success');
+            return User.findById(req.body.userId);
+        })
+        .then(user => {
+            creator = user;
+            user.artists.push(artist);
+            return user.save();
+        })
+        .then(result => {
+            console.log(result, 'post successful');
             res.status(201).json(result);
         })
         .catch(err => {
@@ -37,10 +46,12 @@ exports.postArtist = (req, res, next) => {
 };
 
 exports.deleteArtist = (req, res, next) => {
-    const artistId = '5de81386d755a40fdb74fb13';
+    const artistId = req.body.artistId;
+    console.log('The REQ...', req);
     Artist
         .findByIdAndRemove(artistId)
         .then(artist => {
+            console.log('Got to Then block', artist);
             if (!artist) {
                 return res.status(404).json( 'This artist does not exist!');
             }
