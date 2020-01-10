@@ -13,7 +13,11 @@ exports.getArtistResults = (req, res, next) => {
             const artistsResults = response.data.resultsPage;
             res.status(200).json(artistsResults);
         }).catch(err => {
-            console.log('HERE IS THE ERROR!!!!!!!!!!!!', err);
+            console.log(err);
+            if (!err.statusCode) {
+                err.statusCode = 500;
+            }
+            next(err);
         }
     );
 };
@@ -35,6 +39,10 @@ exports.getConcertResults = (req, res, next) => {
             });
         }).catch(err => {
             console.log(err);
+            if (!err.statusCode) {
+                err.statusCode = 500;
+            }
+            next(err);
         }
     );
 };

@@ -13,11 +13,15 @@ exports.getMyArtists = (req, res, next) => {
         })
         .catch(err => {
             console.log(err);
+            if (!err.statusCode) {
+                err.statusCode = 500;
+            }
+            next(err);
         });
 };
 
 exports.postArtist = (req, res, next) => {
-    console.log('REQUEST BODY: ', req.body);
+    // console.log('REQUEST BODY: ', req.body);
     let creator;
     const artist = new Artist({
         name: req.body.name,
@@ -42,28 +46,48 @@ exports.postArtist = (req, res, next) => {
         })
         .catch(err => {
             console.log(err);
+            if (!err.statusCode) {
+                err.statusCode = 500;
+            }
+            next(err);
         });
 };
 
 exports.deleteArtist = (req, res, next) => {
     const artistId = req.body.artistId;
-    console.log('The REQ...', req);
+    const userId = req.body.userId;
+    // console.log('ArtistId: ', artistId, 'UserId: ', userId);
     Artist
-        .findByIdAndRemove(artistId)
+        .findById(artistId)
         .then(artist => {
-            console.log('Got to Then block', artist);
-            if (!artist) {
-                return res.status(404).json( 'This artist does not exist!');
+            // console.log('Got to Then block', artist);
+            if (artist.creator.toString() !== userId) 
+            {
+                const error = new Error('Not authorized!');
+                error.statusCode = 403;
+                throw error;
             }
-            res
-            .status(200)
-            .json(
+            return Artist.findByIdAndRemove(artistId);
+        })
+        .then(result => {
+            return User.findById(req.body.userId);
+        })
+        .then(user => {
+            user.artists.pull(artistId);
+            return user.save();
+        })
+        .then(result => {
+            res.status(200).json(
                 {
                     message: 'Artist removed from Followed Artists DB!'
                 }
-            );
+            ); 
         })
         .catch(err => {
-            console.log(err, 'error in deleteArtist');
+            console.log(err);
+            if (!err.statusCode) {
+                err.statusCode = 500;
+            }
+            next(err);
         });
 };
