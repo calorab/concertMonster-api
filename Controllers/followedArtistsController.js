@@ -3,11 +3,13 @@ const User = require('../Models/user');
 
 
 exports.getMyArtists = (req, res, next) => {
+    console.log('UserID::: ', req.userId);
     Artist
-        .find()
+        .find({creator: req.userId})
         .then(result => {
+            console.log('RESULT.... ', result)
             res.status(200).json({
-                message: 'Artist successfully retrieved!',
+                message: 'Artists successfully retrieved!',
                 artists: result
             });
         })

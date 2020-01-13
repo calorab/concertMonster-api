@@ -47,7 +47,7 @@ exports.signup = (req, res, next) => {
             'concertmonsterthinkfulsecret'
         );
         console.log(token);
-        res.status(200).json({response: data, message: 'NOICE!!', token: token, userId: data._id.toString()});
+        res.status(200).json({response: data, token: token, userId: data._id.toString()});
     })    
     .catch(err => {
         console.log(err);
