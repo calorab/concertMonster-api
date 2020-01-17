@@ -7,11 +7,11 @@ exports.signup = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
     console.log('received body', req.body);
-    User.findOne(email)
+    User.findOne({email: email})
     .then(user => {
         if (user.email) 
         {
-            const error = new Error('Not authorized!');
+            const error = new Error('Email already Exists!');
             error.statusCode = 403;
             throw error;
         }

@@ -8,6 +8,6 @@ const searchController = require('../Controllers/searchController');
 router.get('/artists/:artistName', searchController.getArtistResults);
 
 // GET /searchConcerts
-router.get('/concerts', searchController.getConcertResults);
+// router.get('/concerts', searchController.getConcertResults);
 
 module.exports = router;

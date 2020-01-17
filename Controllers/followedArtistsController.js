@@ -1,11 +1,13 @@
+
 const Artist = require('../Models/artist');
 const User = require('../Models/user');
 
 
 exports.getMyArtists = (req, res, next) => {
     console.log('UserID::: ', req.userId);
+    const userId = req.userId;
     Artist
-        .find({creator: req.userId})
+        .find({creator: userId})
         .then(result => {
             console.log('RESULT.... ', result)
             res.status(200).json({
@@ -21,6 +23,7 @@ exports.getMyArtists = (req, res, next) => {
             next(err);
         });
 };
+
 
 exports.postArtist = (req, res, next) => {
     // console.log('REQUEST BODY: ', req.body);
