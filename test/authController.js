@@ -4,6 +4,8 @@
 
 // const User = require('../Models/user');
 // // const authController = require('../Controllers/auth');
+// const {app, runServer, closeServer} = require('../server');
+// const {TEST_DATABASE_URL} = require('../config');
 
 // describe('Auth Controller', () => {
   

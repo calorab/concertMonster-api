@@ -5,42 +5,64 @@ const mongoose = require('mongoose');
 
 const User = require('../Models/user');
 const Artist = require('../Models/artist');
-const app = require('../app');
+const {app, runServer, closeServer} = require('../app');
+const {TEST_DATABASE_URL} = require('../config');
 
 chai.use(chaiHttp);
-// HELP - error notes:
-// ***Getting error: TypeError: Cannot read property 'address' of undefined - referring to request(app)
-describe('Followed Artists Controller', () => {
-    before(done => {
-        mongoose
-        .connect(
-            'mongodb+srv://admin:HM7wwhyy3GcjhzS@cluster0-6akq9.mongodb.net/test?retryWrites=true&w=majority'
-        )
-        .then(result => {
-            const user = new User({
-                email: 'test@test.com',
-                password: '123456'
-            });
-            console.log('User Created!!!' + user);
-            return user.save();
-        })
-        .then(user => {
-          const artist = new Artist({
-            name: "Halsey",
-            tour: "2020-06-04",
-            url: "http://www.songkick.com/artists/203876-alison-krauss?utm_source=54847&utm_medium=partner",
-            creator: user._id 
-          });
-          console.log('Artist Created!!!' + artist)
-          return artist.save();
-        })
-        .then(() => {
-            done();
-        }).catch(done);
+
+generateData = () => {
+  return new Promise((resolve, reject) => {
+    const user = new User({
+      email: 'test@test.com',
+      password: '123456'
+    });
+    console.log('User Created!!!' + user);
+    return user.save(function (err, user) {
+      if (err) return console.error('user.save() error: ', err);
+      console.log('In user.save()', user);
+    }); 
+  })
+  .then(user => {
+    console.log("here!!!");
+    const artist = new Artist({
+      name: "Halsey",
+      tour: "2020-06-04",
+      url: "http://www.songkick.com/artists/203876-alison-krauss?utm_source=54847&utm_medium=partner",
+      creator: user._id 
+    });
+    console.log('Artist Created!!!' + artist)
+    return artist.save();
+  }).catch(err => {
+    console.log(err);
+    return err;
+  });
+};
+
+tearDownDb = () => {
+  console.warn('Deleting database');
+  return mongoose.connection.dropDatabase();
+}
+
+describe('Followed Artists Controller', function() {
+
+  before(function() {
+    return runServer(TEST_DATABASE_URL);
+  });
+
+  beforeEach(function() {
+    return generateData();
+  });
+
+  afterEach(function() {
+    return tearDownDb();
+  });
+
+  after(function() {
+    return closeServer();
   });
 
 
-  describe('FollowedArtists - GET', () => {
+  describe('FollowedArtists - GET', function() {
     it('should get all artists followed by creator', () => {
       const userId = 
       User
@@ -51,7 +73,7 @@ describe('Followed Artists Controller', () => {
 
       let res;
       return chai.request(app)
-        .get('/followedartists/myartists/')
+        .get('/followedartists/myartists')
         .send({userId: userId})
         .then(function(response) {
           // so subsequent .then blocks can access response object
@@ -65,7 +87,7 @@ describe('Followed Artists Controller', () => {
     });
   });
 
-  describe('FollowedArtists - POST', () => {
+  describe('FollowedArtists - POST', function() {
     it('should add an artist to the followed artists of the creator', () => {
       const userId = 
       User
@@ -73,14 +95,6 @@ describe('Followed Artists Controller', () => {
         .then(user => {
         return user._id;
       });
-      const newArtist = {
-          body: {
-              name: 'Alison Wonderland',
-              tour: '2020-06-04',
-              url: 'www.testing.com/test',
-              userId: userId
-          }
-      };
 
       let res;
       return chai.request(app)
@@ -90,44 +104,33 @@ describe('Followed Artists Controller', () => {
           res = response;
           expect(res).to.have.status(200);
           expect(res).to.be.json;
-          expect(res.body.artists).to.have.lengthOf(2);
+          expect(res.body.artists).to.have.lengthOf(1);
         });
     });
   });
 
-  describe('FollowedArtists - DELETE', () => {
-      it('Should remove selected artist from database', () => {
-        artistId = 
-        Artist
-          .findOne({email: 'test@test.com'})
-          .then(artist => {
-            return artist._id
-          });
+  describe('FollowedArtists - DELETE', function() {
 
-        return chai.request(app).delete(artistId).then(res => {
-          expect(res).to.have.status(200);
-          expect(res).to.be.json;
-          expect(res).to.have.property({message: 'Artist removed from Followed Artists DB!'});
-          return Artists.count();
-        })
-        .then(count => {
-          expect(res.body.artists).to.have.lengthOf(count);
+    
+    it('Should remove selected artist from database', () => {
+
+      artistId = 
+      Artist
+        .findOne({email: 'test@test.com'})
+        .then(artist => {
+          console.log(artist._id);
+          return artist._id
         });
-        
-      });
-  });
 
-    
-
-    
-
-  after(done => {
-    User.deleteMany({})
-      .then(() => {
-        return mongoose.disconnect();
+      return chai.request(app).delete(artistId).then(res => {
+        expect(res).to.have.status(200);
+        expect(res).to.be.json;
+        expect(res).to.have.property({message: 'Artist removed from Followed Artists DB!'});
+        return Artists.count();
       })
-      .then(() => {
-        done();
-      });
+      .then(count => {
+        expect(res.body.artists).to.have.lengthOf(count);
+      });  
+    });
   });
 });

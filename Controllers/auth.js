@@ -15,12 +15,10 @@ exports.signup = (req, res, next) => {
             error.statusCode = 403;
             throw error;
         }
-    }).catch(err => {
-        console.log('findOne error: ', err);
-        if (!err.statusCode) {
-            err.statusCode = 500;
-        }
-        next(err);
+    })
+    .catch(err => {
+        console.log(err);
+        return err;
     });
 
     bcrypt
@@ -33,7 +31,6 @@ exports.signup = (req, res, next) => {
             return user.save();
     })
     .then(result => {
-        console.log('SIGNUP: ', result);
         data = result;
         return data;
     })
@@ -46,15 +43,12 @@ exports.signup = (req, res, next) => {
             },
             'concertmonsterthinkfulsecret'
         );
-        console.log(token);
+        console.log('THE TOKEN ', token);
         res.status(200).json({response: data, token: token, userId: data._id.toString()});
     })    
     .catch(err => {
         console.log(err);
-        if (!err.statusCode) {
-            err.statusCode = 500;
-        }
-        next(err);
+        return err;
     });
 };
 
@@ -65,11 +59,13 @@ exports.login = (req, res, next) => {
     User
     .findOne({email: email})
     .then(user => {
+        console.log('USER FOUND??? ', user)
         if (!user) {
-            res.status(500).json({message: 'No user with that email found!'});
-        }
+            // res.status(500).json({message: 'No user with that email found!'});
+            throw new Error('No user with that email found!');
+        } 
         loadedUser = user;
-        return bcrypt.compare(password, user.password);
+        return bcrypt.compare(password, user.password); 
     })
     .then(isEqual => {
         if (!isEqual) {
@@ -80,16 +76,12 @@ exports.login = (req, res, next) => {
               email: loadedUser.email,
               userId: loadedUser._id.toString()
             },
-            'concertmonsterthinkfulsecret',
-            { expiresIn: '1h' }
+            'concertmonsterthinkfulsecret'
         );
-        res.status(200).json({token: token, userId: loadedUser._id.toString(), expiresIn: 3600});
+        res.status(200).json({token: token, userId: loadedUser._id.toString()});
     })
     .catch(err => {
-        console.log(err);
-        if (!err.statusCode) {
-            err.statusCode = 500;
-        }
+        console.log('the error: ', err);
         next(err);
     });
 };

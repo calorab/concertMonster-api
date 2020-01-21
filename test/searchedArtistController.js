@@ -3,6 +3,8 @@
 
 // const User = require('../models/user');
 // const followedArtistsController = require('../Controllers/followedArtistsController');
+// const {app, runServer, closeServer} = require('../server');
+// const {TEST_DATABASE_URL} = require('../config');
 
 // describe('Searched Artists Controller', () => {
 //     before(done => {
