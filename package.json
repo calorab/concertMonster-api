@@ -4,7 +4,7 @@
   "description": "REST-api for ConcertMonster React frontend",
   "main": "app.js",
   "scripts": {
-    "test": "mocha --timeout 5000",
+    "test": "mocha",
     "start": "nodemon app.js"
   },
   "author": "Caleb Gammon",

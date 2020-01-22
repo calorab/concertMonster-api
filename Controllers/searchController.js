@@ -14,7 +14,7 @@ exports.getArtistResults = (req, res, next) => {
             res.status(200).json(artistsResults);
         }).catch(err => {
             console.log(err);
-            return err;
+            next(err);
         }
     );
 };

@@ -11,9 +11,7 @@ exports.signup = (req, res, next) => {
     .then(user => {
         if (user.email) 
         {
-            const error = new Error('Email already Exists!');
-            error.statusCode = 403;
-            throw error;
+            throw new Error('Email already Exists!');
         }
     })
     .catch(err => {
@@ -48,7 +46,7 @@ exports.signup = (req, res, next) => {
     })    
     .catch(err => {
         console.log(err);
-        return err;
+        next(err);
     });
 };
 
@@ -61,7 +59,6 @@ exports.login = (req, res, next) => {
     .then(user => {
         console.log('USER FOUND??? ', user)
         if (!user) {
-            // res.status(500).json({message: 'No user with that email found!'});
             throw new Error('No user with that email found!');
         } 
         loadedUser = user;

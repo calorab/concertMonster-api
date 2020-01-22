@@ -17,9 +17,6 @@ exports.getMyArtists = (req, res, next) => {
         })
         .catch(err => {
             console.log(err);
-            if (!err.statusCode) {
-                err.statusCode = 500;
-            }
             next(err);
         });
 };
@@ -51,7 +48,7 @@ exports.postArtist = (req, res, next) => {
         })
         .catch(err => {
             console.log(err);
-            return err;
+            next(err);
         });
 };
 
@@ -65,9 +62,7 @@ exports.deleteArtist = (req, res, next) => {
             // console.log('Got to Then block', artist);
             if (artist.creator.toString() !== userId) 
             {
-                const error = new Error('Not authorized!');
-                error.statusCode = 403;
-                throw error;
+                throw new Error('Not authorized!');
             }
             return Artist.findByIdAndRemove(artistId);
         })
@@ -87,6 +82,6 @@ exports.deleteArtist = (req, res, next) => {
         })
         .catch(err => {
             console.log(err);
-            return err;
+            next(err);
         });
 };
