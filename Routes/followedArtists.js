@@ -5,7 +5,7 @@ const isAuth = require('../Middleware/isAuth');
 
 const followedArtistsController = require('../Controllers/followedArtistsController');
 
-// GET /myArtists -----  removed isAuth, below
+// GET /myArtists -----  removed isAuth, below for testing
 router.get('/myartists', followedArtistsController.getMyArtists); 
 
 // POST /myArtist

@@ -4,8 +4,7 @@ const User = require('../Models/user');
 
 
 exports.getMyArtists = (req, res, next) => {
-    console.log('UserID::: ', req.userId);
-    const userId = req.userId;
+    const userId = req.body.userId;
     Artist
         .find({creator: userId})
         .then(result => {

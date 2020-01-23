@@ -6,19 +6,21 @@ const User = require('../Models/user');
 exports.signup = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
-    console.log('received body', req.body);
+    console.log('received body: ', email, password);
     User.findOne({email: email})
     .then(user => {
-        if (user.email) 
+        console.log('For Testing - existing user if null ', user)
+        if (user) 
         {
-            throw new Error('Email already Exists!');
+            throw new Error('User with that email already Exists!');  
         }
+        
     })
     .catch(err => {
         console.log(err);
-        return err;
+        next(err);
     });
-
+ 
     bcrypt
         .hash(password, 12)
         .then(hashedPassword => {
@@ -54,17 +56,20 @@ exports.login = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
     let loadedUser;
+    console.log('TESTING - received login info: ', req.body);
     User
     .findOne({email: email})
     .then(user => {
-        console.log('USER FOUND??? ', user)
+        console.log('TESTING USER FOUND? ', user);
         if (!user) {
             throw new Error('No user with that email found!');
         } 
         loadedUser = user;
+        console.log('req.body.password:' + password, 'user.password:' + user.password);
         return bcrypt.compare(password, user.password); 
     })
     .then(isEqual => {
+        console.log('Is Equal?? ', isEqual);
         if (!isEqual) {
             res.status(403).json({message: 'Password is incorrect!'});
         }

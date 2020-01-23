@@ -1,52 +1,44 @@
-// const should = require('chai').should();
-// const mongoose = require('mongoose');
+const chai = require('chai');
+const chaiHttp = require('chai-http');
+const expect = require('chai').expect;
+const mongoose = require('mongoose');
 
-// const User = require('../models/user');
-// const followedArtistsController = require('../Controllers/followedArtistsController');
-// const {app, runServer, closeServer} = require('../server');
-// const {TEST_DATABASE_URL} = require('../config');
+const {app, runServer, closeServer} = require('../app');
+const {TEST_DATABASE_URL} = require('../config');
 
-// describe('Searched Artists Controller', () => {
-//     before(done => {
-//         mongoose
-//         .connect(
-//             'mongodb+srv://admin:HM7wwhyy3GcjhzS@cluster0-6akq9.mongodb.net/test?retryWrites=true&w=majority'
-//         )
-//         .then(result => {
-//             const user = new User({
-//             email: 'test@test.com',
-//             password: '12345',
-//             artists: [],
-//             _id: '5e1ca9740bbc132a24226907'
-//             });
-//             return user.save();
-//         })
-//         .then(() => {
-//             done();
-//         });
-//   });
+chai.use(chaiHttp);
 
-//     it('should return list of search results', done => {
-//         const req = {
-//             params: {
-//                 artistName: 'alison'
-//             }
-//         };
+tearDownDb = () => {
+    console.warn('Deleting database');
+    return mongoose.connection.dropDatabase();
+;}
 
-//     });
+describe('Searched Artists Controller', () => {
+    
+    before(function() {
+        return runServer(TEST_DATABASE_URL);
+    });
+    
+    after(function() {
+        return tearDownDb().then(() => { 
+            return closeServer()
+        }); 
+    });
 
-//     it('should get all artists followed by creator', done => {
-//         req = { userId: '5e1ca9740bbc132a24226907'};
+    it('should return list of search results', function() {
+        let artistName = 'alison';
 
-//     });
+        return chai.request(app)
+            .get(`/search/artists/${artistName}`)
+            .send(artistName)
+            .then(res => {
+                console.log('The results are: ', res.body.results);
+                return list = res.body.results;
+            }).then(list => {
+                expect(list).to.not.be.null;
+                expect(list).to.have.property('artist');
+            });
+    });
 
-//   after(done => {
-//     User.deleteMany({})
-//       .then(() => {
-//         return mongoose.disconnect();
-//       })
-//       .then(() => {
-//         done();
-//       });
-//   });
-// });
+  
+});
