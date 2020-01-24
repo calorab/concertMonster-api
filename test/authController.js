@@ -3,6 +3,7 @@ const faker = require('faker');
 const mongoose = require('mongoose');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
+const bcrypt = require('bcryptjs');
 
 
 
@@ -12,18 +13,27 @@ const {TEST_DATABASE_URL} = require('../config');
 
 chai.use(chaiHttp);
 
-generateData = () => {
+generateUser = () => {
     console.log('Inside generateData() ');
-    User.create(
-      {
-        email: 'test@test.com', 
-        password: '12345'
-      }
-    )
-    .then(user => {
-        console.log('User created: ', user);
-        return user;  
-    });
+    let userEmail = 'test@test.com';
+    let userPassword = '12345'
+    bcrypt
+        .hash(userPassword, 12)
+        .then(hashedPassword => {
+            let user = User.create({
+                email: userEmail,
+                password: hashedPassword
+            });
+            return user;
+        })
+        .then(user => {
+            console.log('User created: ', user);
+            return user;  
+        })
+        .catch(err => {
+            console.log(err);
+            return err;
+        });
 }
 
 tearDownDb = () => {
@@ -31,12 +41,13 @@ tearDownDb = () => {
     return mongoose.connection.dropDatabase();
 }
 
+
+
 describe('Auth Controller', () => {
-  
     before(function() {
         console.log('Before function ');
         return runServer(TEST_DATABASE_URL).then(() => {
-          return generateData();
+          return generateUser();
         });
     });
     
@@ -44,22 +55,9 @@ describe('Auth Controller', () => {
     return tearDownDb().then(() => { 
         return closeServer()}); 
     });
+    
 
     describe('Auth - signup', () => {
-  
-        it('should throw an error on signup', function() {
-            let newUser = {
-                email: 'test@test.com',
-                password: faker.internet.password()
-            };
-            return chai.request(app)
-                .post('/auth/signup')
-                .send(newUser)
-                .then(res => {
-                    expect(res).to.have.status(500);
-                    expect(res).to.be.json;
-                });
-        }); 
       
         it('should create a new user', function() {
             let newUser = {

@@ -5,51 +5,50 @@ const User = require('../Models/user');
 
 exports.signup = (req, res, next) => {
     const email = req.body.email;
-    const password = req.body.password;
-    console.log('received body: ', email, password);
+    console.log('received body: ', req.body);
     User.findOne({email: email})
-    .then(user => {
-        console.log('For Testing - existing user if null ', user)
-        if (user) 
-        {
-            throw new Error('User with that email already Exists!');  
-        }
-        
-    })
-    .catch(err => {
-        console.log(err);
-        next(err);
-    });
- 
-    bcrypt
-        .hash(password, 12)
-        .then(hashedPassword => {
-            const user = new User({
-                email: email,
-                password: hashedPassword
-            });
-            return user.save();
-    })
-    .then(result => {
-        data = result;
-        return data;
-    })
-    .then(data => {
-        console.log('RIGHT BEFORE TOKEN ', req.body, 'DATA: ', data);
-        const token = jwt.sign(
+        .then(user => {
+            console.log('For Testing - new user if null ', user)
+            if (user) 
             {
-                email: data.email,
-                userId: data._id
-            },
-            'concertmonsterthinkfulsecret'
-        );
-        console.log('THE TOKEN ', token);
-        res.status(200).json({response: data, token: token, userId: data._id.toString()});
-    })    
-    .catch(err => {
-        console.log(err);
-        next(err);
-    });
+                throw new Error('User with that email already Exists!');                
+            } 
+        })
+        .then(() => {
+            console.log('Request.body is ', req.body);
+            let password = req.body.password;
+            let email = req.body.email;
+            bcrypt
+                .hash(password, 12)
+                .then(hashedPassword => {
+                    let hashedUser = User.create({
+                        email: email,
+                        password: hashedPassword
+                    });
+                    return hashedUser;
+                })
+                .then(result => {
+                    console.log('Here is the result: ', result);
+                    data = result;
+                    return data;
+                })
+                .then(data => {
+                    console.log('RIGHT BEFORE TOKEN ', req.body, 'DATA: ', data);
+                    const token = jwt.sign(
+                        {
+                            email: data.email,
+                            userId: data._id
+                        },
+                        'concertmonsterthinkfulsecret'
+                    );
+                    console.log('THE TOKEN ', token);
+                    res.status(200).json({response: data, token: token, userId: data._id.toString()});
+                })    
+                .catch(err => {
+                    console.log(err);
+                    next(err);
+                });   
+        })
 };
 
 exports.login = (req, res, next) => {
