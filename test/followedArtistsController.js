@@ -20,7 +20,6 @@ generateData = () => {
     }
   )
   .then(user => {
-    console.log('User Created!!!' + user);
     Artist.create({
         name: "Halsey",
         tour: "2020-06-04",
@@ -28,14 +27,12 @@ generateData = () => {
         creator: user._id 
       })
       .then(artist => {
-        console.log('The artist : ', artist);
         Artist.findOne(artist._id).then(artist => console.log('THE ARTIST IN GENERATEDATA ', artist))
       })
       .catch(err => {
         console.log(err);
         return err;
       });
-      // console.log('Artist Created!!!' + artist)
   })
   
     
@@ -62,17 +59,14 @@ describe('Followed Artists Controller', function() {
 
   describe('FollowedArtists - GET', function() {
     it('should get all artists followed by creator', function() { 
-      console.log('Start - GET REQ ');
 
         User.findOne({email: 'test@test.com'})
           .then(user => {
-            console.log('LOG: ', user._id);
             let userId = user._id;
             return chai.request(app)
             .get('/followedartists/myartists')
             .send({userId: userId})
             .then(response => {
-              console.log('HERES THE RESPONSE FOR GET ', response.body);
               res = response.body;
               expect(res).to.have.property('message');
               expect(res).to.be.a('object');
@@ -84,10 +78,8 @@ describe('Followed Artists Controller', function() {
 
   describe('FollowedArtists - POST', function() {
     it('should add an artist to the followed artists of the creator', function() {
-      console.log('Start - POST REQ ');
         User.find({email: 'test@test.com'})
           .then(user => {
-            console.log('POST getting userId ', user);
             let userId = user._id; 
             return chai.request(app)
               .post('/followedartists/myartist')
@@ -105,7 +97,6 @@ describe('Followed Artists Controller', function() {
                 }
               )
               .then(res => {
-                console.log('HERES THE RESPONSE FOR POST ', res.body);
                 expect(res).to.have.status(200);
                 expect(res).to.be.json;
                 expect(res.body.artists).to.have.lengthOf(1);
@@ -116,27 +107,19 @@ describe('Followed Artists Controller', function() {
 
   describe('FollowedArtists - DELETE', function() { 
     it('Should remove selected artist from database', function() {
-      console.log('Start - DELETE REQ '); 
   
       Artist.find()
         .then(artist => {
-          console.log('STEP ONE', artist);
           let userId = artist.creator;
           return chai.request(app)
           .delete('/followedartists/deleteartist')
           .send({userId: userId})
           .then(res => {
-            console.log('STEP THREE ', res.body);
             expect(res).to.have.status(200);
             expect(res).to.be.json;
             expect(res).to.have.property({ message: 'Artist removed from Followed Artists DB!' });
             expect(res.body.artists).to.have.lengthOf(0);
           }); 
-        })
-        .then(artistId => {
-          // console.log('DELETE RESPONSE ')
-          
-          
         }); 
     });
   });

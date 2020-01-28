@@ -4,11 +4,10 @@ const User = require('../Models/user');
 
 
 exports.getMyArtists = (req, res, next) => {
-    const userId = req.body.userId;
+    const userId = req.userId;
     Artist
         .find({creator: userId})
         .then(result => {
-            console.log('RESULT.... ', result)
             res.status(200).json({
                 message: 'Artists successfully retrieved!',
                 artists: result
@@ -22,7 +21,6 @@ exports.getMyArtists = (req, res, next) => {
 
 
 exports.postArtist = (req, res, next) => {
-    // console.log('REQUEST BODY: ', req.body);
     let creator;
     const artist = new Artist({
         name: req.body.name,
@@ -42,7 +40,6 @@ exports.postArtist = (req, res, next) => {
             return user.save();
         })
         .then(result => {
-            console.log(result, 'post successful');
             res.status(201).json(result);
         })
         .catch(err => {
@@ -54,11 +51,9 @@ exports.postArtist = (req, res, next) => {
 exports.deleteArtist = (req, res, next) => {
     const artistId = req.body.artistId;
     const userId = req.body.userId;
-    // console.log('ArtistId: ', artistId, 'UserId: ', userId);
     Artist
         .findById(artistId)
         .then(artist => {
-            // console.log('Got to Then block', artist);
             if (artist.creator.toString() !== userId) 
             {
                 throw new Error('Not authorized!');

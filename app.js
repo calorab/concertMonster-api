@@ -32,14 +32,6 @@ app.use((error, req, res, next) => {
     res.status(status).json({ message: message, data: data });
 });
 
-// mongoose.connect(
-//     'mongodb+srv://admin:HM7wwhyy3GcjhzS@cluster0-6akq9.mongodb.net/test?retryWrites=true&w=majority')
-//     .then(result => {
-//         app.listen(8080);
-//         console.log("Listening on 8080");
-// }).catch(err => console.log('Err on listen', err));
-
-// module.exports = app.listen(8080);
 let server;
 function runServer(databaseUrl, port = PORT) {
 

@@ -32,13 +32,10 @@ describe('Searched Artists Controller', () => {
             .get(`/search/artists/${artistName}`)
             .send(artistName)
             .then(res => {
-                console.log('The results are: ', res.body.results);
                 return list = res.body.results;
             }).then(list => {
                 expect(list).to.not.be.null;
                 expect(list).to.have.property('artist');
             });
     });
-
-  
 });

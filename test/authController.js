@@ -27,7 +27,6 @@ generateUser = () => {
             return user;
         })
         .then(user => {
-            console.log('User created: ', user);
             return user;  
         })
         .catch(err => {
@@ -64,7 +63,6 @@ describe('Auth Controller', () => {
                 email: faker.internet.email(),
                 password: faker.internet.password()
             };
-            console.log('The New user ', newUser);
             return chai.request(app)
                 .post('/auth/signup')
                 .send(newUser)
