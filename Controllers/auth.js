@@ -39,10 +39,14 @@ exports.signup = (req, res, next) => {
                     res.status(200).json({response: data, token: token, userId: data._id.toString()});
                 })    
                 .catch(err => {
-                    console.log(err);
+                    console.log('Bcrypt error: ', err);
                     next(err);
                 });   
         })
+        .catch(err => {
+            console.log('Signup error: ', err);
+            next(err);
+        }); 
 };
 
 exports.login = (req, res, next) => {
