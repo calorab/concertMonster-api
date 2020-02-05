@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 
 const bodyParser = require('body-parser');
 const { PORT, DATABASE_URL } = require('./config');
+const compression = require('compression');
 
 const followedArtistsRoutes = require('./Routes/followedArtists');
 const searchArtistsRoutes = require('./Routes/searchRoutes');
@@ -23,6 +24,8 @@ app.use((req, res, next) => {
 app.use('/followedartists', followedArtistsRoutes);
 app.use('/search', searchArtistsRoutes);
 app.use('/auth', authRoutes);
+
+app.use(compression());
 
 app.use((error, req, res, next) => {
     console.log(error);
