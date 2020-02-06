@@ -1,8 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
-
+const cors = require('cors');
 const bodyParser = require('body-parser');
-const { PORT, DATABASE_URL } = require('./config');
+const { PORT, DATABASE_URL, CLIENT_ORIGIN } = require('./config');
 const compression = require('compression');
 
 const followedArtistsRoutes = require('./Routes/followedArtists');
@@ -12,6 +12,11 @@ const authRoutes = require('./Routes/auth');
 mongoose.Promise = global.Promise;
 const app = express();
 
+app.use(
+  cors({
+      origin: CLIENT_ORIGIN
+  })
+)
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
